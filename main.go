@@ -24,7 +24,7 @@ func main() {
 	twitterSecret := os.Getenv("TWITTER_SECRET")
 
 	goth.UseProviders(
-		twitter.New(twitterKey, twitterSecret, "http://localhost:5000/auth/twitter/callback"),
+		twitter.New(twitterKey, twitterSecret, "http://127.0.0.1:5000/auth/twitter/callback"),
 	)
 
 	v := render.New(render.Options{
