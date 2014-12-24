@@ -6,6 +6,7 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/pat"
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
@@ -17,7 +18,10 @@ var view = render.New(render.Options{
 	Directory:     "templates",
 	Extensions:    []string{".html"},
 	IsDevelopment: true,
+	IndentJSON:    true,
 })
+
+var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 
 func init() {
 	err := godotenv.Load()
@@ -25,11 +29,8 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 
-	twitterKey := os.Getenv("TWITTER_KEY")
-	twitterSecret := os.Getenv("TWITTER_SECRET")
-
 	goth.UseProviders(
-		twitter.New(twitterKey, twitterSecret, "http://127.0.0.1:5000/auth/twitter/callback"),
+		twitter.New(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"), "http://127.0.0.1:5000/auth/twitter/callback"),
 	)
 }
 
