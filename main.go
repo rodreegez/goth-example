@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/gplus"
 	"github.com/markbates/goth/providers/twitter"
 	"gopkg.in/unrolled/render.v1"
 )
@@ -34,6 +35,10 @@ func init() {
 	baseURL := "http://127.0.0.1:" + port
 
 	goth.UseProviders(
+		gplus.New(
+			os.Getenv("GPLUS_KEY"),
+			os.Getenv("GPLUS_SECRET"),
+			baseURL+"/auth/gplus/callback"),
 		twitter.New(
 			os.Getenv("TWITTER_KEY"),
 			os.Getenv("TWITTER_SECRET"),
