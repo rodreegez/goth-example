@@ -21,6 +21,7 @@ var view = render.New(render.Options{
 	IndentJSON:    true,
 })
 
+var port = "5000"
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 
 func init() {
@@ -29,8 +30,14 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 
+	port = os.Getenv("PORT")
+	baseURL := "http://127.0.0.1:" + port
+
 	goth.UseProviders(
-		twitter.New(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"), "http://127.0.0.1:5000/auth/twitter/callback"),
+		twitter.New(
+			os.Getenv("TWITTER_KEY"),
+			os.Getenv("TWITTER_SECRET"),
+			baseURL+"/auth/twitter/callback"),
 	)
 }
 
@@ -43,5 +50,5 @@ func main() {
 
 	n := negroni.Classic()
 	n.UseHandler(p)
-	n.Run(":5000")
+	n.Run(":" + port)
 }
