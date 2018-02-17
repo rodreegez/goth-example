@@ -46,6 +46,7 @@ func main() {
 
 	p.Get("/auth/{provider}/callback", CallbackHandler)
 	p.Get("/auth/{provider}", gothic.BeginAuthHandler)
+	p.Get("/signout", SignoutHandler)
 	p.Get("/", IndexHandler)
 
 	n := negroni.Classic()

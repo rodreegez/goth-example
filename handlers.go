@@ -28,9 +28,18 @@ func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	view.JSON(w, http.StatusOK, user)
 }
 
+func SignoutHandler(w http.ResponseWriter, r *http.Request) {
+	setCurrentUser(w, r, "")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func setCurrentUser(w http.ResponseWriter, r *http.Request, id string) {
 	session, _ := store.Get(r, os.Getenv("SESSION_NAME"))
-	session.Values["current_user"] = id
+	if id == "" {
+		delete(session.Values, "current_user")
+	} else {
+		session.Values["current_user"] = id
+	}
 	session.Save(r, w)
 }
 
