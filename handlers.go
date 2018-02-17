@@ -25,7 +25,8 @@ func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	setCurrentUser(w, r, user.Name)
 
-	view.JSON(w, http.StatusOK, user)
+	//view.JSON(w, http.StatusOK, user)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func SignoutHandler(w http.ResponseWriter, r *http.Request) {
