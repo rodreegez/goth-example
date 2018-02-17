@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/gplus"
 	"github.com/markbates/goth/providers/twitter"
 	"gopkg.in/unrolled/render.v1"
 )
@@ -21,6 +22,7 @@ var view = render.New(render.Options{
 	IndentJSON:    true,
 })
 
+var port = "5000"
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 
 func init() {
@@ -29,8 +31,18 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 
+	port = os.Getenv("PORT")
+	baseURL := "http://127.0.0.1:" + port
+
 	goth.UseProviders(
-		twitter.New(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"), "http://127.0.0.1:5000/auth/twitter/callback"),
+		gplus.New(
+			os.Getenv("GPLUS_KEY"),
+			os.Getenv("GPLUS_SECRET"),
+			baseURL+"/auth/gplus/callback"),
+		twitter.New(
+			os.Getenv("TWITTER_KEY"),
+			os.Getenv("TWITTER_SECRET"),
+			baseURL+"/auth/twitter/callback"),
 	)
 }
 
@@ -39,9 +51,10 @@ func main() {
 
 	p.Get("/auth/{provider}/callback", CallbackHandler)
 	p.Get("/auth/{provider}", gothic.BeginAuthHandler)
+	p.Get("/signout", SignoutHandler)
 	p.Get("/", IndexHandler)
 
 	n := negroni.Classic()
 	n.UseHandler(p)
-	n.Run(":5000")
+	n.Run(":" + port)
 }
